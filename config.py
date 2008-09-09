@@ -7,3 +7,5 @@ WINDOW = 640,480
 FONDO = 'fondo.jpg'
 PORTA = 'portacuerdas.jpg'
 PLAYBG = 'play.jpg'
+
+C = 5

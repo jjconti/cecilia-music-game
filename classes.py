@@ -27,9 +27,11 @@ class Label(pygame.sprite.Sprite):
 
 class App(object):
 
-    def __init__(self, screen):
+    def __init__(self, screen, cuerdas):
+        self.cuerdas = cuerdas
         self.screen = screen
         self.load_bg()
+        self.draw_cuerdas()
         self.widgets = pygame.sprite.OrderedUpdates()
         #self.widgets.add()
         #labels = [Label(u"(para transmisión digital)", (530, 380)), Label(u"(para transmisión analógica)", (530, 580))]
@@ -45,6 +47,19 @@ class App(object):
         self.bg.blit(fondo, (0,0))
         self.bg.blit(porta, (0,340))
         self.bg.blit(playbg, (500,340))
+
+    def draw_cuerdas(self):
+        font = pygame.font.Font(None, 20)
+        y = 340 + 15
+        x = 15
+        for i,c in enumerate(self.cuerdas):
+            image = font.render(str(i), True, BLACK)
+            self.bg.blit(image, (x, y))
+            ox,oy = x + 20, y + 10
+            dx = ox + C*c
+            dy = oy 
+            pygame.draw.line(self.bg, BLACK, (ox,oy), (dx,dy), 3)
+            y += 20
 
     def loop(self):
        pygame.display.flip()

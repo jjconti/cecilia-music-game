@@ -16,7 +16,9 @@ def main():
     #screen.fill(WHITE)
     pygame.display.set_caption(WINDOW_TITLE)
 
-    app = App(screen)
+    cuerdas = (5, 10, 15, 30, 50, 65)
+
+    app = App(screen, cuerdas)
     app.loop()
 
 if __name__ == "__main__":
