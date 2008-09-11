@@ -6,7 +6,7 @@ import math
 import pygame
 from pygame.locals import *
 
-from utils import load_image
+from utils import load_image, load_sound
 from config import *
  
 class Label(pygame.sprite.Sprite):
@@ -29,6 +29,7 @@ class App(object):
 
     def __init__(self, screen, cuerdas):
         self.cuerdas = cuerdas
+        self.sounds = [load_sound(s) for s in SOUNDS]
         self.cancion = []   #hasta 18 cuerdas
         self.screen = screen
         self.load_bg()
@@ -109,17 +110,21 @@ class App(object):
             print "MAX cancion"
             return
         if event.unicode == u"1" and len(self.cuerdas) >= 1:
-            self.cancion.append(self.cuerdas[0])
+            self._cuerda(1)
         elif event.unicode == u"2" and len(self.cuerdas) >= 2:
-            self.cancion.append(self.cuerdas[1])        
+            self._cuerda(2)
         elif event.unicode == u"3" and len(self.cuerdas) >= 3:
-            self.cancion.append(self.cuerdas[2])
+            self._cuerda(3)
         elif event.unicode == u"4" and len(self.cuerdas) >= 4:
-            self.cancion.append(self.cuerdas[3])
+            self._cuerda(4)
         elif event.unicode == u"5" and len(self.cuerdas) >= 5:
-            self.cancion.append(self.cuerdas[4])
+            self._cuerda(5)
         elif event.unicode == u"6" and len(self.cuerdas) >= 6:
-            self.cancion.append(self.cuerdas[5])
+            self._cuerda(6)
+
+    def _cuerda(self, i):
+        self.cancion.append(self.cuerdas[i - 1])
+        self.sounds[i].play()
 
     def draw(self):
         self.widgets.draw(self.screen)
