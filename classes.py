@@ -29,6 +29,7 @@ class App(object):
 
     def __init__(self, screen, cuerdas):
         self.cuerdas = cuerdas
+        self.cancion = []   #hasta 18 cuerdas
         self.screen = screen
         self.load_bg()
         self.draw_cuerdas()
@@ -53,12 +54,23 @@ class App(object):
         y = 340 + 15
         x = 15
         for i,c in enumerate(self.cuerdas):
-            image = font.render(str(i), True, BLACK)
+            image = font.render(str(i+1),True, BLACK)
             self.bg.blit(image, (x, y))
             ox,oy = x + 20, y + 10
             dx = ox + C*c
             dy = oy 
             pygame.draw.line(self.bg, BLACK, (ox,oy), (dx,dy), 3)
+            y += 20
+
+    def draw_cancion(self):
+        medio = 640 / 2
+        y = 20
+        for c in self.cancion:
+            longi = C*c*1.5
+            ox,oy = medio - longi / 2, y 
+            dx = ox + longi
+            dy = oy 
+            pygame.draw.line(self.bg, BLACK, (ox,oy), (dx,dy), 5)
             y += 20
 
     def loop(self):
@@ -68,6 +80,7 @@ class App(object):
             self.clock.tick(100)
             
             self.screen.blit(self.bg, (0,0))
+            self.draw_cancion()
             
             for event in pygame.event.get():
                 self.control(event)
@@ -92,8 +105,22 @@ class App(object):
         pass
             
     def keypress(self, event):
-        pass
-        
+        if len(self.cancion) == 16:
+            print "MAX cancion"
+            return
+        if event.unicode == u"1" and len(self.cuerdas) >= 1:
+            self.cancion.append(self.cuerdas[0])
+        elif event.unicode == u"2" and len(self.cuerdas) >= 2:
+            self.cancion.append(self.cuerdas[1])        
+        elif event.unicode == u"3" and len(self.cuerdas) >= 3:
+            self.cancion.append(self.cuerdas[2])
+        elif event.unicode == u"4" and len(self.cuerdas) >= 4:
+            self.cancion.append(self.cuerdas[3])
+        elif event.unicode == u"5" and len(self.cuerdas) >= 5:
+            self.cancion.append(self.cuerdas[4])
+        elif event.unicode == u"6" and len(self.cuerdas) >= 6:
+            self.cancion.append(self.cuerdas[5])
+
     def draw(self):
         self.widgets.draw(self.screen)
 
