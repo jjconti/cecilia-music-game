@@ -2,42 +2,40 @@
 import string
 import sys
 import math
+import time
 
 import pygame
 from pygame.locals import *
 
 from utils import load_image, load_sound
 from config import *
- 
-class Label(pygame.sprite.Sprite):
 
-    def __init__(self, text="", xy=(0,0), size=25, color=BLACK):
-        pygame.sprite.Sprite.__init__(self)
-        self.text = text
-        self.size = size
-        self.x, self.y = xy    #topleft
-        self.color = BLACK
-        self.image = pygame.Surface((self.size, self.size))
+class Play(object):
 
-    def update(self):
-        font = pygame.font.Font(None, self.size)
-        self.image = font.render(self.text, True, self.color)
-        self.rect = self.image.get_rect().inflate(10,10).move(self.x, self.y)
+    def __init__(self, screen, cancion, cuerdas, bg):
+        self.cancion = cancion
+        self.cuerdas = cuerdas
+        self.sounds = [load_sound(s) for s in SOUNDS]
+        self.screen = screen
+        self.screen.blit(bg, (0,0))
 
+    def play(self):
+        pygame.display.flip()
+        for c in self.cancion:
+            self.sounds[self.cuerdas.index(c) + 1].play()
+            time.sleep(1)
 
-class App(object):
+class Level(object):
 
-    def __init__(self, screen, cuerdas):
+    def __init__(self, screen, cuerdas, cancion):
         self.cuerdas = cuerdas
         self.sounds = [load_sound(s) for s in SOUNDS]
         self.cancion = []   #hasta 18 cuerdas
+        self.objetivo = cancion
         self.screen = screen
         self.load_bg()
         self.draw_cuerdas()
         self.widgets = pygame.sprite.OrderedUpdates()
-        #self.widgets.add()
-        #labels = [Label(u"(para transmisión digital)", (530, 380)), Label(u"(para transmisión analógica)", (530, 580))]
-        #self.widgets.add(labels)
         self.exit = False
         self.clock = pygame.time.Clock()
 
@@ -58,7 +56,7 @@ class App(object):
             image = font.render(str(i+1),True, BLACK)
             self.bg.blit(image, (x, y))
             ox,oy = x + 20, y + 10
-            dx = ox + C*c
+            dx = ox + C * CUERDAS[c]
             dy = oy 
             pygame.draw.line(self.bg, BLACK, (ox,oy), (dx,dy), 3)
             y += 20
@@ -67,11 +65,11 @@ class App(object):
         medio = 640 / 2
         y = 20
         for c in self.cancion:
-            longi = C*c*1.5
+            longi = C*CUERDAS[c]*1.5
             ox,oy = medio - longi / 2, y 
             dx = ox + longi
             dy = oy 
-            pygame.draw.line(self.bg, BLACK, (ox,oy), (dx,dy), 5)
+            pygame.draw.line(self.screen, BLACK, (ox,oy), (dx,dy), 5)
             y += 20
 
     def loop(self):
@@ -95,16 +93,31 @@ class App(object):
         if event.type == QUIT:
             sys.exit(0)
         elif event.type == KEYDOWN:
-            self.keypress(event)
+            if event.key == K_RETURN:
+                if self.play():
+                    self.exit = True
+            elif event.key == K_ESCAPE:
+                if self.cancion:
+                    self.cancion.pop()
+            else:
+                self.keypress(event)
         elif event.type == MOUSEBUTTONDOWN:
             self.mouseclick(event) 
         
+    def play(self):
+        for c in self.cancion:
+            self.sounds[c + 1].play()
+            time.sleep(1)
+        if self.cancion ==  self.objetivo:
+            print "Ganaste!"
+            return True
+        else:
+            print "Perdiste!"
+            return False
+
     def update(self):
         self.widgets.update()
-        
-    def mouseclick(self, event):
-        pass
-            
+
     def keypress(self, event):
         if len(self.cancion) == 16:
             print "MAX cancion"
